@@ -1,7 +1,7 @@
 {
   "name": "collaborative-graph-editor",
   "main": "node_modules/expo/AppEntry.js",
-  "homepage": "http://maastrichtu-ids.github.io/collaborative-graph-editor",
+  "homepage": "http://sabaturgay.github.io/collaborative-graph-editor",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
