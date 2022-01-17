@@ -21,6 +21,8 @@ type User = {
   }
 }
 
+
+
 export function MyGraphEditor(props: any) {
   const {
     width,
@@ -31,6 +33,13 @@ export function MyGraphEditor(props: any) {
     users: [] as User[],
   })
   const userId = React.useMemo(() => R.uuid(), [])
+  const localDataRef = React.useRef({
+    user: null,
+    mousePosition: {
+      x: 0,
+      y: 0,
+    }
+  })
   const [controllerProps, controller] = useController({
     nodes: [],
     edges: [],
@@ -174,23 +183,24 @@ export function MyGraphEditor(props: any) {
   });
   const graphEditorRef = controllerProps.ref
   const removeUser = React.useCallback(() => {
+    localDataRef.current.user = null
     API.deleteUser({
       projectId: PROJECT_ID,
       id: userId
     })
   }, [userId])
   const  createUser = React.useCallback(() => {
+    const user = {
+      id: userId,
+      name: userName,
+      position: localDataRef.current.mousePosition
+    }
+    localDataRef.current.user = user
     API.updateUser({
       projectId: PROJECT_ID,
-      user: {
-        id: userId,
-        name: userName,
-        position: {
-          x: 0,
-          y: 0
-        }
-      }
+      user
     })
+    return user
   }, [userId])
   API.useProjectSubscription({
     projectId: PROJECT_ID,
@@ -274,7 +284,6 @@ export function MyGraphEditor(props: any) {
     }
   })
   React.useEffect(() => {
-    createUser()
     const handleWindowChange = (type: string) => (e) => {
       switch (type) {
         case 'visibilitychange':
@@ -332,8 +341,15 @@ export function MyGraphEditor(props: any) {
             }
           })
         // }
-      }, 1000)
+      }, 500)
     const onMouseMove = (event) => {
+      localDataRef.current.mousePosition = getPointerPositionOnViewport(
+        graphEditorRef.current.viewport,
+        event
+      )
+      if (!localDataRef.current.user) {
+        createUser()
+      }
       debounced(event)
     }
     document.addEventListener('mousemove', onMouseMove)
@@ -350,7 +366,6 @@ export function MyGraphEditor(props: any) {
       window.removeEventListener('beforeunload', beforeUnloadHandler, false);
     }
   }, [])
-  console.log(state.users)
   return (
     <GraphEditor
       style={{ width, height }}
