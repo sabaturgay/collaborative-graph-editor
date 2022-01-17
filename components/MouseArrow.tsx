@@ -13,9 +13,14 @@ export type MouseArrowProps = {
   label: string;
 }
 
-export const MouseArrow: React.FC<MouseArrowProps> = ({ user, position, label }) => {
-  const color = React.useMemo(() => {
+const SPEED = 5
 
+export const MouseArrow: React.FC<MouseArrowProps> = ({ user, position, label }) => {
+  const localDataRef = React.useRef({
+    targetPosition: position,
+  })
+  const containerRef = React.useRef()
+  const color = React.useMemo(() => {
     var randomColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
     console.log('a', randomColor, Color(randomColor).rgbNumber())
     return Color(randomColor).rgbNumber()
@@ -33,11 +38,42 @@ export const MouseArrow: React.FC<MouseArrowProps> = ({ user, position, label })
       unitVector: { x: -2, y: -2 },
     })
   }, [color])
+  React.useMemo(() => {
+    localDataRef.current.targetPosition = position
+  }, [position])
+  React.useEffect(() => {
+    containerRef.current.x = position.x
+    containerRef.current.y = position.y
+    const tickerFunc = () => {
+      const container = containerRef.current
+      if (!container) {
+        return
+      }
+      const targetPosition = Vector.fromObject(localDataRef.current.targetPosition)
+      const currentPosition = Vector.fromObject(container)
+      const distance = targetPosition.clone().subtract(currentPosition)
+      const distanceLength = distance.length()
+      if (distanceLength < SPEED) {
+        container.x = targetPosition.x
+        container.y = targetPosition.y
+      } else {
+        const unitVector = distance.clone().normalize()
+        const newPosition = currentPosition.clone().add(unitVector.clone().multiplyScalar(SPEED))
+        container.x = newPosition.x
+        container.y = newPosition.y
+      }
+    }
+    PIXI.Ticker.shared.add(tickerFunc)
+    return () => {
+      PIXI.Ticker.shared.remove(tickerFunc)
+    }
+  }, [])
   
   return (
     <Container
-      x={position.x}
-      y={position.y}
+      ref={containerRef}
+      x={0}
+      y={0}
     >
       <Graph.Graphics draw={draw}/>
       <Graph.Text text={label} />

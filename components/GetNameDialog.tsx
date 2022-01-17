@@ -32,6 +32,11 @@ export const  GetNameDialog = (props: GetNameDialogProps) => {
             variant="standard"
             value={name}
             onChange={e => setName(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                onSubmit(name)
+              }
+            }}
           />
         </DialogContent>
         <DialogActions>

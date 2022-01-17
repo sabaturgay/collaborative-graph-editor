@@ -38,7 +38,8 @@ export function MyGraphEditor(props: any) {
     mousePosition: {
       x: 0,
       y: 0,
-    }
+    },
+    userInitialized: false,
   })
   const [controllerProps, controller] = useController({
     nodes: [],
@@ -123,7 +124,6 @@ export function MyGraphEditor(props: any) {
           } = payload as {
             itemIds: string[]
           }
-          console.log('AA', itemIds)
           // draft.nodes = draft.nodes.filter((nodeItem) => !itemIds.includes(nodeItem.id))
           // draft.edges = draft.edges.filter(
           //   (edgeItem) => !itemIds.includes(edgeItem.source)
@@ -347,7 +347,8 @@ export function MyGraphEditor(props: any) {
         graphEditorRef.current.viewport,
         event
       )
-      if (!localDataRef.current.user) {
+      if (!localDataRef.current.user && !localDataRef.current.userInitialized) {
+        localDataRef.current.userInitialized = true
         createUser()
       }
       debounced(event)
