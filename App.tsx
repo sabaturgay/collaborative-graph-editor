@@ -5,7 +5,7 @@ import { GetNameDialog } from './components/GetNameDialog'
 import {  useLayout } from 'colay-ui'
 import {  useImmer } from 'colay-ui/hooks/useImmer'
 import { useAuth } from './api/firebase'
-
+import  { Button } from '@mui/material'
 export default function App() {
   const {
     width,
@@ -16,44 +16,53 @@ export default function App() {
     isLoading: true,
     name: ''
   })
-  const authResult = useAuth()
-  console.log('Auth result', authResult)
+  const auth = useAuth()
+  console.log('Auth result', auth)
+  if (auth.isLoading) {
+    return (
+      <ActivityIndicator />
+    )
+  }
+  if (!auth.user) {
+    return (
+      <Button
+        onClick={() => auth.signin()}
+      >
+        Signin
+      </Button>
+    )
+  }
   return (
     <View
       style={styles.container}
       onLayout={onLayout}
     >
      {
-       authResult.isLoading
+       state.isLoading
        ? (
-         <ActivityIndicator />
+          <GetNameDialog 
+            onSubmit={(name) => {
+              updateState((draft)=> {
+                draft.isLoading = false
+                draft.name = name
+              })
+            }}
+          />
        )
        : (
-          state.isLoading
-          ? (
-             <GetNameDialog 
-               onSubmit={(name) => {
-                 updateState((draft)=> {
-                   draft.isLoading = false
-                   draft.name = name
-                 })
-               }}
-             />
-          )
-          : (
-           <MyGraphEditor
-             {...{
-               width,
-               height,
-             }}
-             userName={state.name}
-           />
-          )
+        <MyGraphEditor
+          {...{
+            width,
+            height,
+          }}
+          userName={state.name}
+        />
        )
      }
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

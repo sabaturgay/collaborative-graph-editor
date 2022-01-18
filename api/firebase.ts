@@ -9,7 +9,6 @@ import {
  import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { useSubscription,   } from 'colay-ui'
 import { useImmer,   } from 'colay-ui/hooks/useImmer'
-import { Position,  } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,13 +44,15 @@ export const useAuth = () => {
   const [state, updateState] = useImmer({
     user: null,
     isLoading: true,
-  })
-  React.useEffect(() => {
-    const call = async () => {
+    signin: async () => {
       try {
+        updateState(draft => {
+          draft.isLoading = true
+        })
         const result = await signInWithPopup(auth, new GoogleAuthProvider())
         // const credential = GoogleAuthProvider.credentialFromResult(result);
         // const token = credential.accessToken;
+        console.log('AA', result)
         const user = result.user;
         updateState(draft => {
           draft.isLoading = false
@@ -67,6 +68,19 @@ export const useAuth = () => {
         //   // The AuthCredential type that was used.
         //   const credential = GoogleAuthProvider.credentialFromError(error);
       }
+    }
+  })
+  React.useEffect(() => {
+    const call = async () => {
+      const user = await new Promise((res, rej) => {
+        auth.onAuthStateChanged((user, error) => {
+          res(user)
+        })
+      })
+      updateState((draft) => {
+        draft.isLoading = false
+        draft.user = user 
+      })
     }
     call()
   }, [])
