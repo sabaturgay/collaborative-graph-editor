@@ -1,10 +1,10 @@
 import React from 'react'
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { MyGraphEditor } from './components/GraphEditor'
 import { GetNameDialog } from './components/GetNameDialog'
 import {  useLayout } from 'colay-ui'
 import {  useImmer } from 'colay-ui/hooks/useImmer'
+import { useAuth } from './api/firebase'
 
 export default function App() {
   const {
@@ -16,31 +16,39 @@ export default function App() {
     isLoading: true,
     name: ''
   })
+  const authResult = useAuth()
+  console.log('Auth result', authResult)
   return (
     <View
       style={styles.container}
       onLayout={onLayout}
     >
      {
-       state.isLoading 
+       authResult.isLoading
        ? (
-          <GetNameDialog 
-            onSubmit={(name) => {
-              updateState((draft)=> {
-                draft.isLoading = false
-                draft.name = name
-              })
-            }}
-          />
+         <ActivityIndicator />
        )
        : (
-        <MyGraphEditor
-          {...{
-            width,
-            height,
-          }}
-          userName={state.name}
-        />
+          state.isLoading
+          ? (
+             <GetNameDialog 
+               onSubmit={(name) => {
+                 updateState((draft)=> {
+                   draft.isLoading = false
+                   draft.name = name
+                 })
+               }}
+             />
+          )
+          : (
+           <MyGraphEditor
+             {...{
+               width,
+               height,
+             }}
+             userName={state.name}
+           />
+          )
        )
      }
     </View>

@@ -1,15 +1,19 @@
+import React from 'react'
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { 
-  getFirestore, addDoc, updateDoc, doc,
+  getFirestore,addDoc, updateDoc, doc,
   onSnapshot, collection,  deleteDoc, setDoc,
  } from "firebase/firestore";
-import { useSubscription,  } from 'colay-ui'
+ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useSubscription,   } from 'colay-ui'
+import { useImmer,   } from 'colay-ui/hooks/useImmer'
 import { Position,  } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -28,12 +32,44 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const firestore = getFirestore(app);
+const auth = getAuth(app);
 
 const PATHS = {
   projects: 'projects',
   nodes: 'nodes',
   edges: 'edges',
   users: 'users',
+}
+
+export const useAuth = () => {
+  const [state, updateState] = useImmer({
+    user: null,
+    isLoading: true,
+  })
+  React.useEffect(() => {
+    const call = async () => {
+      try {
+        const result = await signInWithPopup(auth, new GoogleAuthProvider())
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        const user = result.user;
+        updateState(draft => {
+          draft.isLoading = false
+          draft.user = user
+        })
+      } catch (error) {
+        alert('There is an error with your login! Refresh the page and try again!')
+        // const errorCode = error.code;
+        //   const errorMessage = error.message;
+        //   // The email of the user's account used.
+        //   const email = error.email;
+        //   // The AuthCredential type that was used.
+        //   const credential = GoogleAuthProvider.credentialFromError(error);
+      }
+    }
+    call()
+  }, [])
+  return state
 }
 
 type Event = {
