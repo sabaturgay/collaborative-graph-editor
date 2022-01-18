@@ -59,6 +59,7 @@ export const useAuth = () => {
         })
       } catch (error) {
         alert('There is an error with your login! Refresh the page and try again!')
+        console.log('error', error)
         // const errorCode = error.code;
         //   const errorMessage = error.message;
         //   // The email of the user's account used.
