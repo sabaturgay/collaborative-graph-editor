@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/collaborative-graph-editor/static/js/app.33140420.chunk.js",
-    "app.js.map": "/collaborative-graph-editor/static/js/app.33140420.chunk.js.map",
+    "app.js": "/collaborative-graph-editor/static/js/app.8b7e2223.chunk.js",
+    "app.js.map": "/collaborative-graph-editor/static/js/app.8b7e2223.chunk.js.map",
     "runtime~app.js": "/collaborative-graph-editor/static/js/runtime~app.44d8cc1e.js",
     "runtime~app.js.map": "/collaborative-graph-editor/static/js/runtime~app.44d8cc1e.js.map",
     "static/js/2.7af8a60f.chunk.js": "/collaborative-graph-editor/static/js/2.7af8a60f.chunk.js",
@@ -18,6 +18,6 @@
   "entrypoints": [
     "static/js/runtime~app.44d8cc1e.js",
     "static/js/2.7af8a60f.chunk.js",
-    "static/js/app.33140420.chunk.js"
+    "static/js/app.8b7e2223.chunk.js"
   ]
 }
