@@ -1,23 +1,22 @@
 {
   "files": {
-    "app.js": "/collaborative-graph-editor/static/js/app.ac836dfd.chunk.js",
-    "app.js.map": "/collaborative-graph-editor/static/js/app.ac836dfd.chunk.js.map",
+    "app.js": "/collaborative-graph-editor/static/js/app.182aea99.chunk.js",
+    "app.js.map": "/collaborative-graph-editor/static/js/app.182aea99.chunk.js.map",
     "runtime~app.js": "/collaborative-graph-editor/static/js/runtime~app.44d8cc1e.js",
     "runtime~app.js.map": "/collaborative-graph-editor/static/js/runtime~app.44d8cc1e.js.map",
-    "static/js/2.89d40ba4.chunk.js": "/collaborative-graph-editor/static/js/2.89d40ba4.chunk.js",
-    "static/js/2.89d40ba4.chunk.js.map": "/collaborative-graph-editor/static/js/2.89d40ba4.chunk.js.map",
+    "static/js/2.24a9836c.chunk.js": "/collaborative-graph-editor/static/js/2.24a9836c.chunk.js",
+    "static/js/2.24a9836c.chunk.js.map": "/collaborative-graph-editor/static/js/2.24a9836c.chunk.js.map",
     "favicon-16.png": "/collaborative-graph-editor/favicon-16.png",
     "favicon-32.png": "/collaborative-graph-editor/favicon-32.png",
     "favicon.ico": "/collaborative-graph-editor/favicon.ico",
     "index.html": "/collaborative-graph-editor/index.html",
     "manifest.json": "/collaborative-graph-editor/manifest.json",
     "serve.json": "/collaborative-graph-editor/serve.json",
-    "static/js/2.89d40ba4.chunk.js.LICENSE.txt": "/collaborative-graph-editor/static/js/2.89d40ba4.chunk.js.LICENSE.txt",
-    "static/media/jsoneditor-icons.svg": "/collaborative-graph-editor/static/media/jsoneditor-icons.15f2789d.svg"
+    "static/js/2.24a9836c.chunk.js.LICENSE.txt": "/collaborative-graph-editor/static/js/2.24a9836c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime~app.44d8cc1e.js",
-    "static/js/2.89d40ba4.chunk.js",
-    "static/js/app.ac836dfd.chunk.js"
+    "static/js/2.24a9836c.chunk.js",
+    "static/js/app.182aea99.chunk.js"
   ]
 }
