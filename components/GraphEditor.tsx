@@ -1,5 +1,6 @@
 import React from 'react'
-import { Graph, GraphEditor, } from "perfect-graph";
+import { Graph, } from "perfect-graph";
+import { GraphEditor, } from "perfect-graph/components/GraphEditor";
 import { DefaultTheme } from "perfect-graph/core/theme";
 import { getSelectedItemByElement, getSelectedElementInfo } from "perfect-graph/utils";
 import { EVENT, EDITOR_MODE } from "perfect-graph/constants";
@@ -51,6 +52,14 @@ export function MyGraphEditor(props: any) {
       local: {
 
       },
+    },
+    label: {
+      global: {
+        nodes: ['name'],
+        edges: ['name'],
+      },
+      edges: {},
+      nodes: {},
     },
     onEvent: ({
       type,
@@ -113,7 +122,13 @@ export function MyGraphEditor(props: any) {
           items.forEach((item) => {
             API.createNode({
               projectId: PROJECT_ID,
-              item
+              item: {
+                ...item,
+                data: {
+                  ...item.data,
+                  name: `Node-${R.take(4, item.id)}`
+                }
+              }
             })
           })
           if (draft.mode === EDITOR_MODE.ADD) {
@@ -150,7 +165,13 @@ export function MyGraphEditor(props: any) {
           items.forEach((item) => {
             API.createEdge({
               projectId: PROJECT_ID,
-              item
+              item: {
+                ...item,
+                data: {
+                  ...item.data,
+                  name: `Edge-${R.take(4, item.id)}`
+                }
+              }
             })
           })
           if (draft.mode === EDITOR_MODE.ADD) {
