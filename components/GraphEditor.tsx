@@ -153,6 +153,17 @@ export function MyGraphEditor(props: any) {
               id
             })
           })
+           draft.edges.forEach(
+            (edgeItem) => {
+              if (itemIds.includes(edgeItem.source)
+              || itemIds.includes(edgeItem.target)) {
+                API.deleteEdge({
+                  projectId: PROJECT_ID,
+                  id: edgeItem.id
+                })
+              }
+            },
+            )
           if (draft.mode === EDITOR_MODE.DELETE) {
             draft.mode = EDITOR_MODE.DEFAULT
           }
