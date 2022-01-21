@@ -1,15 +1,17 @@
-import React from 'react'
-import { Graph, } from "perfect-graph";
-import { GraphEditor, } from "perfect-graph/components/GraphEditor";
-import { DefaultTheme } from "perfect-graph/core/theme";
-import { getSelectedItemByElement, getSelectedElementInfo } from "perfect-graph/utils";
-import { EVENT, EDITOR_MODE } from "perfect-graph/constants";
-import { useController } from "perfect-graph/plugins/controller";
-import { getPointerPositionOnViewport } from "perfect-graph/utils";
-import * as API from "../api/firebase";
-import * as R from "colay/ramda";
+import {
+  createTheme as createMuiTheme,
+  ThemeProvider as MuiThemeProvider
+} from '@mui/material';
 import { useImmer } from "colay-ui/hooks/useImmer";
-import { MouseArrow } from './MouseArrow'
+import * as R from "colay/ramda";
+import { GraphEditor } from "perfect-graph/components/GraphEditor";
+import { EDITOR_MODE, EVENT } from "perfect-graph/constants";
+import { DarkTheme, DefaultTheme } from "perfect-graph/core/theme";
+import { useController } from "perfect-graph/plugins/controller";
+import { getPointerPositionOnViewport, getSelectedElementInfo, getSelectedItemByElement } from "perfect-graph/utils";
+import React from 'react';
+import * as API from "../api/firebase";
+import { MouseArrow } from './MouseArrow';
 
 const PROJECT_ID = 'daa9975c-6bdc-4ab3-9a01-2d1dca1f2290'
 
@@ -22,6 +24,58 @@ type User = {
   }
 }
 
+const overrideTheme = (theme) => {
+  Object.keys(theme.typography).forEach((key) => {
+    if (theme.typography[key]?.fontSize) {
+      theme.typography[key].fontSize = Number(
+        theme.typography[key].fontSize.replace('rem', '')
+        ) * 16  * 0.8
+    }
+  })
+  return theme
+}
+
+const MUIDarkTheme = overrideTheme(
+  createMuiTheme({
+    palette: {
+      mode: 'dark',
+    },
+    spacing: 4,
+    components: {
+      MuiTextField: {
+        defaultProps: {
+          size: 'small'
+        }
+      }
+    }
+  })
+)
+
+const MUILightTheme = overrideTheme(
+  createMuiTheme({
+    palette: {
+      mode: 'light',
+    },
+    spacing: 4,
+    components: {
+      MuiTextField: {
+        defaultProps: {
+          size: 'small'
+        }
+      }
+    }
+  })
+)
+
+const MUI_THEMES = {
+  Dark: MUIDarkTheme,
+  Default: MUILightTheme,
+}
+
+const THEMES = {
+  Dark: DarkTheme,
+  Default: DefaultTheme
+}
 
 
 export function MyGraphEditor(props: any) {
@@ -33,6 +87,7 @@ export function MyGraphEditor(props: any) {
   const [state, updateState] = useImmer({
     users: [] as User[],
   })
+  const [theme, setTheme] = React.useState(MUI_THEMES.Default)
   const userId = React.useMemo(() => R.uuid(), [])
   const localDataRef = React.useRef({
     user: null,
@@ -47,6 +102,15 @@ export function MyGraphEditor(props: any) {
     edges: [],
     dataBar: {
       editable: true
+    },
+    actionBar: {
+      theming: {
+        options: [
+          { name: 'Light', value: 'Default' },
+          { name: 'Dark', value: 'Dark' },
+        ],
+        value: 'Default',
+      }
     },
     networkStatistics: {
       local: {
@@ -80,6 +144,7 @@ export function MyGraphEditor(props: any) {
         index: selectedItemIndex,
       } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
+        
         case EVENT.UPDATE_DATA: {
           const {
             value
@@ -205,6 +270,16 @@ export function MyGraphEditor(props: any) {
           if (draft.mode === EDITOR_MODE.DELETE) {
             draft.mode = EDITOR_MODE.DEFAULT
           }
+          return false
+        }
+        case EVENT.CHANGE_THEME: {
+          const {
+            value
+          } = payload
+          console.log('CHANGE_THEME',payload,value)
+          draft.graphConfig.theme = THEMES[value]
+          setTheme(MUI_THEMES[value])
+          draft.actionBar.theming.value = value
           return false
         }
       //   case EVENT.MODE_CHANGED: {
@@ -403,30 +478,32 @@ export function MyGraphEditor(props: any) {
     }
   }, [])
   return (
-    <GraphEditor
-      style={{ width, height }}
-      {...controllerProps}
-    >
-      {
-        state.users.map((user) => userId !== user.id && (
-          // <Graph.View
-          //   width={10}
-          //   height={10}
-          //   fill={DefaultTheme.palette.primary.main}
-          //   x={user.position.x}
-          //   y={user.position.y}
-          // >
-          //   <Graph.Text text={R.takeLast(4, user.id)} />
-          // </Graph.View>
-          <MouseArrow 
-            key={user.id}
-            user={user}
-            color={0xff3300}
-            position={user.position}
-            label={user.name}
-          />
-        ))
-      }
-    </GraphEditor>
+    <MuiThemeProvider theme={theme}>
+      <GraphEditor
+        style={{ width, height }}
+        {...controllerProps}
+      >
+        {
+          state.users.map((user) => userId !== user.id && (
+            // <Graph.View
+            //   width={10}
+            //   height={10}
+            //   fill={DefaultTheme.palette.primary.main}
+            //   x={user.position.x}
+            //   y={user.position.y}
+            // >
+            //   <Graph.Text text={R.takeLast(4, user.id)} />
+            // </Graph.View>
+            <MouseArrow 
+              key={user.id}
+              user={user}
+              color={0xff3300}
+              position={user.position}
+              label={user.name}
+            />
+          ))
+        }
+      </GraphEditor>
+    </MuiThemeProvider>
   );
 }
